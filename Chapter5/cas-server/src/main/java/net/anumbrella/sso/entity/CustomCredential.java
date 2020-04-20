@@ -13,6 +13,10 @@ public class CustomCredential extends UsernamePasswordCredential {
     /**第三方登陆的认证code*/
     private String code;
 
+    private String casusername;
+
+    private String caspassword;
+
     public CustomCredential() {
 
     }
@@ -27,6 +31,22 @@ public class CustomCredential extends UsernamePasswordCredential {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getCasusername() {
+        return casusername;
+    }
+
+    public void setCasusername(String casusername) {
+        this.casusername = casusername;
+    }
+
+    public String getCaspassword() {
+        return caspassword;
+    }
+
+    public void setCaspassword(String caspassword) {
+        this.caspassword = caspassword;
     }
 
     @Override

@@ -56,27 +56,27 @@ public class CustomerHandlerAuthentication extends AbstractPreAndPostProcessingA
 
         CustomCredential customCredential = (CustomCredential) credential;
 
-        String username = customCredential.getUsername();
-        String password = customCredential.getPassword();
+        String casusername = customCredential.getCasusername();
+        String caspassword = customCredential.getCaspassword();
         String code = customCredential.getCode();
-        logger.warn("cas登陆接口：username={},password={},code={}",username,password,code);
+        logger.warn("cas登陆接口：casusername={},caspassword={},code={}",casusername,caspassword,code);
 
         /***调用主数据接口去认证用户名密码start***/
         User info =null;
 
-        if(StringUtils.isNotEmpty(username)&&StringUtils.isNotEmpty(password)){
+        if(StringUtils.isNotEmpty(casusername)&&StringUtils.isNotEmpty(caspassword)){
             try {
-                String s = HttpConnectionUtils.doGet(String.format(validateUrl, StringUtils.trim(username), MD5.nomalSign(StringUtils.trim(password), "UTF-8")));
+                String s = HttpConnectionUtils.doGet(String.format(validateUrl, StringUtils.trim(casusername), MD5.nomalSign(StringUtils.trim(caspassword), "UTF-8")));
 
                 JSONObject jsonObject = JSON.parseObject(s);
                 String retCode = jsonObject.getString("code");
                 if(StringUtils.equals(retCode,"01")){
                     info = new User();
-                    info.setUsername(StringUtils.trim(username));
+                    info.setUsername(StringUtils.trim(casusername));
                 }
 
             } catch (IOException e) {
-                logger.error("调用MDM登陆接口出错，username={},password={},code={}",username,password,code,e);
+                logger.error("调用MDM登陆接口出错，username={},password={},code={}",casusername,caspassword,code,e);
             }
         }else if(StringUtils.isNotEmpty(code)){
             logger.info("调用code={}去换取userid==================");
@@ -94,7 +94,7 @@ public class CustomerHandlerAuthentication extends AbstractPreAndPostProcessingA
         }else {
             final List<MessageDescriptor> list = new ArrayList<>();
             return createHandlerResult(customCredential,
-                    this.principalFactory.createPrincipal(username, Collections.emptyMap()), list);
+                    this.principalFactory.createPrincipal(casusername, Collections.emptyMap()), list);
         }
 
     }

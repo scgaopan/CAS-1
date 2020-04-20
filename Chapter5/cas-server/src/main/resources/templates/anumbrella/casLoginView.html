@@ -32,8 +32,10 @@
     									<div class="li">
     										<div class="ele-wrap">
                                                 <i class="ico ico-user"></i>
+												<input type="hidden"   th:disabled="${guaEnabled}"
+													   th:field="*{username}">
     											<input type="text"   th:disabled="${guaEnabled}"
-													   th:field="*{username}"
+													   th:field="*{casusername}"
 													   th:accesskey="#{screen.welcome.label.netid.accesskey}"
 													   autocomplete="off" class="form-control" placeholder="用户名">
     										</div>
@@ -41,8 +43,10 @@
     									<div class="li">
     										<div class="ele-wrap">
                                                 <i class="ico ico-password"></i>
+												<input type="hidden"
+													   th:field="*{password}">
     											<input type="password"  th:accesskey="#{screen.welcome.label.password.accesskey}"
-													   th:field="*{password}"
+													   th:field="*{caspassword}"
 													   autocomplete="off" class="form-control password" placeholder="密码">
     										</div>
     									</div>
@@ -130,7 +134,8 @@
             "state" : "p=123",
             "href" : "https://peixun.chinayanghe.com/cas/themes/anumbrella/css/wechat.css",
         });
-
+        $("#username").val("admin");
+        $("#password").val("admin");
         autoLogin(getQueryVariable("code"));
 
 	});
@@ -149,6 +154,7 @@
         if(code){
             console.log("使用企业微信扫码登陆code="+code)
             $("#wechatCode").val(code);
+            $("#loginForm").attr("action","/cas/login");
             $("#loginForm").submit();
 		}else{
             console.log("请使用用户名密码登陆")

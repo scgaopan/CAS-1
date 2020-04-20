@@ -47,7 +47,9 @@ public class CustomWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final BinderConfiguration cfg = getViewStateBinderConfiguration(state);
         // 由于用户名以及密码已经绑定，所以只需对新加系统参数绑定即可
         // 字段名，转换器，是否必须字段
-        cfg.addBinding(new BinderConfiguration.Binding("code", null, true));
+        cfg.addBinding(new BinderConfiguration.Binding("code", null, false));
+        cfg.addBinding(new BinderConfiguration.Binding("casusername", null, false));
+        cfg.addBinding(new BinderConfiguration.Binding("caspassword", null, false));
 
     }
 }
