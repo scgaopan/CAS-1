@@ -12,7 +12,7 @@ import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
- * @author anumbrella
+ * @author gaopan
  */
 public class CustomWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
@@ -38,8 +38,8 @@ public class CustomWebflowConfigurer extends AbstractCasWebflowConfigurer {
      */
     protected void bindCredential(Flow flow) {
 
-        // 重写绑定自定义credential
-        // 重写绑定自定义credential
+        // 重写绑定自定义cred重写绑定自定义credentialential
+        //
         createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, CustomCredential.class);
 
         // 登录页绑定新参数
@@ -47,8 +47,7 @@ public class CustomWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final BinderConfiguration cfg = getViewStateBinderConfiguration(state);
         // 由于用户名以及密码已经绑定，所以只需对新加系统参数绑定即可
         // 字段名，转换器，是否必须字段
-        cfg.addBinding(new BinderConfiguration.Binding("email", null, true));
-        cfg.addBinding(new BinderConfiguration.Binding("telephone", null, true));
+        cfg.addBinding(new BinderConfiguration.Binding("code", null, true));
 
     }
 }

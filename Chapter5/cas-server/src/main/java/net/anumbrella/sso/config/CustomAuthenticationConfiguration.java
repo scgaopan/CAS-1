@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author anumbrella
+ * @author gaopan
  */
 @Configuration("customAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

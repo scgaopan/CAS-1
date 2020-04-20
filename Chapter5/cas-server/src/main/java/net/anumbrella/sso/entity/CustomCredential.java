@@ -1,104 +1,37 @@
 
 package net.anumbrella.sso.entity;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.Size;
 
 /**
- * @author Anumbrella
+ * @author gaopan
  */
 public class CustomCredential extends UsernamePasswordCredential {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomCredential.class);
-
     private static final long serialVersionUID = -4166149641561667276L;
 
-    @Size(min = 1, message = "require email")
-    private String email;
-
-
-    @Size(min = 1, message = "require telephone")
-    private String telephone;
-
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(final String email) {
-        this.email = email;
-    }
-
-    public String getTelephone() {
-        return telephone;
-    }
-
-    public void setTelephone(final String telephone) {
-        this.telephone = telephone;
-    }
+    /**第三方登陆的认证code*/
+    private String code;
 
     public CustomCredential() {
+
     }
 
-
-    public CustomCredential(final String email, final String telephone) {
-        this.email = email;
-        this.telephone = telephone;
+    public CustomCredential(final String code ) {
+        this.code = code;
     }
 
-
-    public boolean equals(final Object o) {
-        if (o == this) {
-            return true;
-        } else if (!(o instanceof CustomCredential)) {
-            return false;
-        } else {
-            CustomCredential other = (CustomCredential) o;
-            if (!other.canEqual(this)) {
-                return false;
-            } else {
-                Object this$email = this.email;
-                Object other$email = other.email;
-                if (this$email == null) {
-                    if (other$email != null) {
-                        return false;
-                    }
-                } else if (!this$email.equals(other$email)) {
-                    return false;
-                }
-
-                Object this$telephone = this.telephone;
-                Object other$telephone = other.telephone;
-                if (this$telephone == null) {
-                    if (other$telephone != null) {
-                        return false;
-                    }
-                } else if (!this$telephone.equals(other$telephone)) {
-                    return false;
-                }
-
-                return true;
-            }
-        }
+    public String getCode() {
+        return code;
     }
 
-
-    protected boolean canEqual(final Object other) {
-        return other instanceof CustomCredential;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(this.email)
-                .append(this.telephone)
-                .toHashCode();
+    protected boolean canEqual(final Object other) {
+        return other instanceof CustomCredential;
     }
-
 
 }

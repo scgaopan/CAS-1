@@ -15,7 +15,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
- * @author anumbrella
+ * @author gaopan
  */
 @Configuration("customerAuthWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -45,7 +45,6 @@ public class CustomerAuthWebflowConfiguration implements CasWebflowExecutionPlan
         // 返回对象
         return c;
     }
-
 
     @Override
     public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {

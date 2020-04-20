@@ -1,30 +1,49 @@
 package net.anumbrella.sso.authentication;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import net.anumbrella.sso.entity.CustomCredential;
 import net.anumbrella.sso.entity.User;
+import net.anumbrella.sso.util.HttpConnectionUtils;
+import net.anumbrella.sso.util.MD5;
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.core.util.JsonUtils;
 import org.apereo.cas.authentication.*;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.FailedLoginException;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * @author anumbrella
+ * @author gaopan
  */
+@Component
 public class CustomerHandlerAuthentication extends AbstractPreAndPostProcessingAuthenticationHandler {
+
+    private static  final Logger logger= LoggerFactory.getLogger(CustomerHandlerAuthentication.class);
 
     public CustomerHandlerAuthentication(String name, ServicesManager servicesManager, PrincipalFactory principalFactory, Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
+
+    @Value("${thrid.validateUrl}")
+    private String  validateUrl;
+
 
     @Override
     public boolean supports(Credential credential) {
@@ -33,54 +52,51 @@ public class CustomerHandlerAuthentication extends AbstractPreAndPostProcessingA
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(Credential credential) throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(Credential credential) throws GeneralSecurityException {
 
         CustomCredential customCredential = (CustomCredential) credential;
 
         String username = customCredential.getUsername();
         String password = customCredential.getPassword();
-        String email = customCredential.getEmail();
-        String telephone = customCredential.getTelephone();
+        String code = customCredential.getCode();
+        if(logger.isDebugEnabled()){
+            logger.debug("cas登陆接口：username={},password={},code={}",username,password,code);
+        }
+        /***调用主数据接口去认证用户名密码start***/
+        User info =null;
 
-        System.out.println("username : " + username);
-        System.out.println("password : " + password);
-        System.out.println("email : " + email);
-        System.out.println("telephone : " + telephone);
+        if(StringUtils.isNotEmpty(username)&&StringUtils.isNotEmpty(password)){
+            try {
+                String s = HttpConnectionUtils.doGet(String.format(validateUrl, StringUtils.trim(username), MD5.nomalSign(StringUtils.trim(password), "UTF-8")));
 
+                JSONObject jsonObject = JSON.parseObject(s);
+                String retCode = jsonObject.getString("code");
+                if(StringUtils.equals(retCode,"01")){
+                    info = new User();
+                    info.setUsername(StringUtils.trim(username));
+                }
 
-        // JDBC模板依赖于连接池来获得数据的连接，所以必须先要构造连接池
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/cas");
-        dataSource.setUsername("root");
-        dataSource.setPassword("123");
-
-        // 创建JDBC模板
-        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-        jdbcTemplate.setDataSource(dataSource);
-
-        String sql = "SELECT * FROM user WHERE username = ?";
-
-        User info = (User) jdbcTemplate.queryForObject(sql, new Object[]{username}, new BeanPropertyRowMapper(User.class));
-
-        System.out.println("database username : "+ info.getUsername());
-        System.out.println("database password : "+ info.getPassword());
-
+            } catch (IOException e) {
+                logger.error("调用MDM登陆接口出错，username={},password={},code={}",username,password,code,e);
+            }
+        }else if(StringUtils.isNotEmpty(code)){
+            logger.info("调用code={}去换取userid==================");
+            String userid="09000852";
+            info=new User();
+            info.setUsername(userid);
+        }else{
+            logger.warn("登陆时用户名和密码、code都为空");
+            throw new AccountException("用户名密码不匹配");
+        }
+        /***调用主数据接口去认证用户名密码start***/
 
         if (info == null) {
-            throw new AccountException("Sorry, username not found!");
-        }
-
-        if (!info.getPassword().equals(password)) {
-            throw new FailedLoginException("Sorry, password not correct!");
-        } else {
-
+            throw new AccountException("用户名密码不匹配");
+        }else {
             final List<MessageDescriptor> list = new ArrayList<>();
-
             return createHandlerResult(customCredential,
                     this.principalFactory.createPrincipal(username, Collections.emptyMap()), list);
         }
-
 
     }
 }
