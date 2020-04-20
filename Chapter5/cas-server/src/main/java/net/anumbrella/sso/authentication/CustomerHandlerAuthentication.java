@@ -59,9 +59,8 @@ public class CustomerHandlerAuthentication extends AbstractPreAndPostProcessingA
         String username = customCredential.getUsername();
         String password = customCredential.getPassword();
         String code = customCredential.getCode();
-        if(logger.isDebugEnabled()){
-            logger.debug("cas登陆接口：username={},password={},code={}",username,password,code);
-        }
+        logger.warn("cas登陆接口：username={},password={},code={}",username,password,code);
+
         /***调用主数据接口去认证用户名密码start***/
         User info =null;
 
