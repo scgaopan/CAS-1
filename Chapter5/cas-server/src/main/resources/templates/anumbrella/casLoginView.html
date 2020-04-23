@@ -212,11 +212,11 @@
                             <!--</div>-->
                         <!--</div>-->
                     </section>
-                    <div th:if="${#fields.hasErrors('*')}">
+                    <div th:if="${#fields.hasErrors('*')}" style="text-align: center;color: #ff0000;">
                         <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
                     </div>
                     <div class="loginItem">
-                        <button type="submit" id="submit">
+                        <button type="submit">
                             <span>登录</span>
                         </button>
                     </div>
@@ -285,8 +285,10 @@
         if(code){
             console.log("使用企业微信扫码登陆code="+code)
             $("#wechatCode").val(code);
-            $("#loginForm").attr("action","/cas/login");
-            $("#loginForm").submit();
+            $("#casusername").val("");
+            $("#caspassword").val("");
+            $("#formLogin").attr("action","/cas/login");
+            $("#formLogin").submit();
         }else{
             console.log("请使用用户名密码登陆")
         }

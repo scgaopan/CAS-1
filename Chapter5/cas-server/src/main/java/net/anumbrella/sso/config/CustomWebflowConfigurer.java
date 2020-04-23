@@ -46,8 +46,12 @@ public class CustomWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final ViewState state = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         final BinderConfiguration cfg = getViewStateBinderConfiguration(state);
         // 由于用户名以及密码已经绑定，所以只需对新加系统参数绑定即可
-        // 字段名，转换器，是否必须字段
+        // 字段名 code 为企业微信登陆时的code
         cfg.addBinding(new BinderConfiguration.Binding("code", null, false));
+
+        //cfg.addBinding(new BinderConfiguration.Binding("username", null, false));
+        //cfg.addBinding(new BinderConfiguration.Binding("password", null, false));
+        //由于cas登陆用户名密码是必填字段，故新新字段来接受用户名和密码
         cfg.addBinding(new BinderConfiguration.Binding("casusername", null, false));
         cfg.addBinding(new BinderConfiguration.Binding("caspassword", null, false));
 
