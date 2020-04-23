@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <link rel="stylesheet" href="./themes/anumbrella/css/basic.css">
+        <link rel="stylesheet" href="./themes/anumbrella/css/login.css">
+        <script type="text/javascript" src="./themes/anumbrella/js/jQuery.js"></script>
+        <script type="text/javascript" src="./themes/anumbrella/js/basic.js"></script>
+	    <script src="https://rescdn.qqmail.com/node/ww/wwopenmng/js/sso/wwLogin-1.0.0.js"></script>
+        <title>超级管理平台</title>
+    </head>
+    <body>
+    	<div class="pagewrap">
+            <div class="website-modify">系统通知信息在此显示</div>
+    		<div class="main" id="screen">
+    			<div class="login-page cjgl-login">
+    				<div class="login-block">
+    					<div class="login-pop">
+    						<h3 class="platform-name">苏酒集团后台管理系统</h3>
+							<form th:object="${credential}" method="post" id="loginForm">
+    						<div class="login-body clearfix">
+    							<div class="login-info">
+                                    <div class="form-error" style="display: none" id="errorDiv">
+                                        <div class="msg-error">
+                                            <i class="btn btn-error"></i>
+                                            <span id="errorSpan"></span>
+                                        </div>
+                                    </div>
+    								<div class="form-list">
+    									<div class="li">
+    										<div class="ele-wrap">
+                                                <i class="ico ico-user"></i>
+												<input type="hidden"   th:disabled="${guaEnabled}"
+													   th:field="*{username}">
+    											<input type="text"   th:disabled="${guaEnabled}"
+													   th:field="*{casusername}"
+													   th:accesskey="#{screen.welcome.label.netid.accesskey}"
+													   autocomplete="off" class="form-control" placeholder="用户名">
+    										</div>
+    									</div>
+    									<div class="li">
+    										<div class="ele-wrap">
+                                                <i class="ico ico-password"></i>
+												<input type="hidden"
+													   th:field="*{password}">
+    											<input type="password"  th:accesskey="#{screen.welcome.label.password.accesskey}"
+													   th:field="*{caspassword}"
+													   autocomplete="off" class="form-control password" placeholder="密码">
+    										</div>
+    									</div>
+										<input type="hidden" id="wechatCode"
+											   th:field="*{code}"
+											   class="form-control" placeholder="微信登陆码">
+										<section>
+											<input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+											<input type="hidden" name="_eventId" value="submit"/>
+											<input type="hidden" name="geolocation"/>
+											<div class="li">
+												<div class="ele-wrap">
+											<input class="btn btn-blue"
+												   style="text-align: center"
+												   name=""
+												   accesskey="l"
+												   th:value="#{screen.welcome.button.login}"
+												   tabindex="6"
+												   type="submit"/>
+												</div>
+											</div>
+										</section>
+										<div th:if="${#fields.hasErrors('*')}">
+											<span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+										</div>
+    								</div>
+    							</div>
+    							<div class="login-right">
+    								<div class="login-ewm">
+    									<div class="ewm-img" id="qrdiv">
+    										<img src="./themes/anumbrella/images/login_ewm.png">
+    									</div>
+    									<span class="ewm-txt">微信扫一扫轻松登录</span>
+    								</div>
+    							</div>
+    						</div>
+							</form>
+    					</div>
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+    </body>
+</html>
+<script>
+	$(function () {
+		function switchImg() {
+			var num = 0;
+			var timer = null;
+			//封装下一张的功能
+			var nextFn=function(){
+
+				//在加之前，第一次的时候，num是0
+				//让旧人离开你的怀抱
+				$('.img-list li').eq(num).fadeOut(1000);
+				num++;
+				if(num>1){
+					num=0;
+				}
+				//在加之后，第一次的时候，num是1
+				//让新人投入你的怀抱
+				$('.img-list li').eq(num).fadeIn(1000);
+			}
+			timer=setInterval(nextFn, 2000);
+		};
+		// 背景图切换
+		switchImg();
+		// 获取焦点
+		$('.login-info .li .form-control').on('focus', function () {
+			$(this).closest('.li').addClass('focus');
+			$(this).closest('.li').siblings().removeClass('focus');
+		});
+		$('.login-info .li .form-control').on('blur', function () {
+			$(this).closest('.li').removeClass('focus');
+		});
+		// 左右高度计算
+		var infoH = $('.login-info').outerHeight();
+		$('.login-right').height(infoH+'px');
+
+        window.WwLogin({
+            "id" : "qrdiv",
+            "appid" : "wwb2aed5915cc292da",
+            "agentid" : "1000004",
+            "redirect_uri" :"https://peixun.chinayanghe.com/cas/login",
+            "state" : "p=123",
+            "href" : "https://peixun.chinayanghe.com/cas/themes/anumbrella/css/wechat.css",
+        });
+        $("#username").val("admin");
+        $("#password").val("admin");
+        autoLogin(getQueryVariable("code"));
+
+	});
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+
+    function autoLogin(code) {
+        if(code){
+            console.log("使用企业微信扫码登陆code="+code)
+            $("#wechatCode").val(code);
+            $("#loginForm").attr("action","/cas/login");
+            $("#loginForm").submit();
+		}else{
+            console.log("请使用用户名密码登陆")
+		}
+    }
+
+
+
+</script>

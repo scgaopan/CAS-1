@@ -1,5 +1,23 @@
-.impowerBox .qrcode {width: 200px;}
-.impowerBox .title {display: none;}
-.impowerBox .info {width: 200px;}
-.status_icon {display: none  !important}
-.impowerBox .status {text-align: center;}
+.impowerBox .qrcode {
+    width: 120px;
+}
+
+.impowerBox .title {
+    display: none;
+}
+
+.impowerBox .info {
+    width: 200px;
+}
+
+.status_icon {
+    display: none !important;
+}
+
+.impowerBox .status {
+    text-align: center;
+}
+
+.wrp_code {
+    margin-top: 0 !important;
+}

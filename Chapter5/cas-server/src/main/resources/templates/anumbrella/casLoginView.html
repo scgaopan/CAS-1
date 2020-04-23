@@ -1,144 +1,275 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="UTF-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <link rel="stylesheet" href="./themes/anumbrella/css/basic.css">
-        <link rel="stylesheet" href="./themes/anumbrella/css/login.css">
-        <script type="text/javascript" src="./themes/anumbrella/js/jQuery.js"></script>
-        <script type="text/javascript" src="./themes/anumbrella/js/basic.js"></script>
-	    <script src="https://rescdn.qqmail.com/node/ww/wwopenmng/js/sso/wwLogin-1.0.0.js"></script>
-        <title>超级管理平台</title>
-    </head>
-    <body>
-    	<div class="pagewrap">
-            <div class="website-modify">系统通知信息在此显示</div>
-    		<div class="main" id="screen">
-    			<div class="login-page cjgl-login">
-    				<div class="login-block">
-    					<div class="login-pop">
-    						<h3 class="platform-name">苏酒集团后台管理系统</h3>
-							<form th:object="${credential}" method="post" id="loginForm">
-    						<div class="login-body clearfix">
-    							<div class="login-info">
-                                    <div class="form-error" style="display: none" id="errorDiv">
-                                        <div class="msg-error">
-                                            <i class="btn btn-error"></i>
-                                            <span id="errorSpan"></span>
-                                        </div>
-                                    </div>
-    								<div class="form-list">
-    									<div class="li">
-    										<div class="ele-wrap">
-                                                <i class="ico ico-user"></i>
-												<input type="hidden"   th:disabled="${guaEnabled}"
-													   th:field="*{username}">
-    											<input type="text"   th:disabled="${guaEnabled}"
-													   th:field="*{casusername}"
-													   th:accesskey="#{screen.welcome.label.netid.accesskey}"
-													   autocomplete="off" class="form-control" placeholder="用户名">
-    										</div>
-    									</div>
-    									<div class="li">
-    										<div class="ele-wrap">
-                                                <i class="ico ico-password"></i>
-												<input type="hidden"
-													   th:field="*{password}">
-    											<input type="password"  th:accesskey="#{screen.welcome.label.password.accesskey}"
-													   th:field="*{caspassword}"
-													   autocomplete="off" class="form-control password" placeholder="密码">
-    										</div>
-    									</div>
-										<input type="hidden" id="wechatCode"
-											   th:field="*{code}"
-											   class="form-control" placeholder="微信登陆码">
-										<section>
-											<input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-											<input type="hidden" name="_eventId" value="submit"/>
-											<input type="hidden" name="geolocation"/>
-											<div class="li">
-												<div class="ele-wrap">
-											<input class="btn btn-blue"
-												   style="text-align: center"
-												   name=""
-												   accesskey="l"
-												   th:value="#{screen.welcome.button.login}"
-												   tabindex="6"
-												   type="submit"/>
-												</div>
-											</div>
-										</section>
-										<div th:if="${#fields.hasErrors('*')}">
-											<span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
-										</div>
-    								</div>
-    							</div>
-    							<div class="login-right">
-    								<div class="login-ewm">
-    									<div class="ewm-img" id="qrdiv">
-    										<img src="./themes/anumbrella/images/login_ewm.png">
-    									</div>
-    									<span class="ewm-txt">微信扫一扫轻松登录</span>
-    								</div>
-    							</div>
-    						</div>
-							</form>
-    					</div>
-    				</div>
-    			</div>
-    		</div>
-    	</div>
-    </body>
-</html>
-<script>
-	$(function () {
-		function switchImg() {
-			var num = 0;
-			var timer = null;
-			//封装下一张的功能
-			var nextFn=function(){
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>portal登录</title>
+    <link rel="stylesheet" href="./themes/anumbrella/css/login.css">
+    <style>
+        body {
+            width: 100%;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-				//在加之前，第一次的时候，num是0
-				//让旧人离开你的怀抱
-				$('.img-list li').eq(num).fadeOut(1000);
-				num++;
-				if(num>1){
-					num=0;
-				}
-				//在加之后，第一次的时候，num是1
-				//让新人投入你的怀抱
-				$('.img-list li').eq(num).fadeIn(1000);
-			}
-			timer=setInterval(nextFn, 2000);
-		};
-		// 背景图切换
-		switchImg();
-		// 获取焦点
-		$('.login-info .li .form-control').on('focus', function () {
-			$(this).closest('.li').addClass('focus');
-			$(this).closest('.li').siblings().removeClass('focus');
-		});
-		$('.login-info .li .form-control').on('blur', function () {
-			$(this).closest('.li').removeClass('focus');
-		});
-		// 左右高度计算
-		var infoH = $('.login-info').outerHeight();
-		$('.login-right').height(infoH+'px');
+        header {
+            height: 50px;
+            line-height: 50px;
+            align-self: flex-start;
+        }
 
+        header img {
+            height: 50px;
+            margin-left: 12px;
+            margin-top: 12px;
+        }
+
+        .container {
+            flex: 1 1 0%;
+            padding: 0;
+            margin-top: 32px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+            width: 100%;
+            background-image: url("./themes/anumbrella/images/background.jpg");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+		.optBack {
+		    width: 330px;
+		    height: 270px;
+		    background-color: #A2B4CC;
+		    position: absolute;
+		    right: 50px;
+		    opacity: 0.5;
+		    z-index: 0;
+		}
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            width: 320px;
+            height: 250px;
+            margin-right: 36px;
+            border-radius: 12px;
+            padding: 12px;
+            /* background-color: #ffffff; */
+            box-shadow: 1px 1px 5px #333333;
+			z-index: 1;
+        }
+
+        .content .loginType {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .content .loginType li {
+            list-style-type: none;
+            font-size: 16px;
+            height: 36px;
+            line-height: 36px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        .content .loginType li:hover {
+            color: #1890ff;
+            font-weight: 500;
+            outline: none;
+            border-bottom: 2px solid #1890ff;
+        }
+
+        .content .loginCon {
+            flex: 1;
+            width: 100%;
+        }
+
+        #formLogin {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+
+        #formLogin .loginItem {
+            flex: auto;
+            min-height: 32px;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        #formLogin .loginItem input {
+            padding: 6.5px 11px;
+            font-size: 14px;
+            width: 90%;
+            height: auto;
+        }
+
+        #formLogin .loginItem button {
+            width: 100%;
+            height: 40px;
+            color: #fff;
+            background-color: #1890ff;
+            border-color: #1890ff;
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+            border: 1px solid transparent;
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+            padding: 6.4px 15px;
+            font-size: 16px;
+            border-radius: 2px;
+            display: inline-block;
+            font-weight: 400;
+            white-space: nowrap;
+            text-align: center;
+            background-image: none;
+            outline: none;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+
+        .weixinScan {
+            display: none;
+        }
+
+        .active {
+            color: #1890ff;
+            font-weight: 500;
+            outline: none;
+            border-bottom: 2px solid #1890ff;
+        }
+
+        footer {
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            font-size: 14px;
+        }
+	</style>
+</head>
+
+<body>
+    <header>
+        <img src="./themes/anumbrella/images/yhLogoMain.png" alt="log">
+    </header>
+    <div class="container">
+        <div class="optBack">
+        </div>
+        <div class="content">
+            <ul class="loginType">
+                <li class="active" onclick="switchTab(this)" showData="#formLogin">账户密码登录</li>
+                <li onclick="switchTab(this)" showData=".weixinScan">企业微信登录</li>
+            </ul>
+            <div class="loginCon">
+                <form th:object="${credential}" method="post" id="formLogin">
+                <!--<form method="post" action="https://www.baidu.com/" id="formLogin">-->
+                    <div class="loginItem">
+                        <input type="hidden"   th:disabled="${guaEnabled}"
+                               th:field="*{username}">
+                        <input type="text"   th:disabled="${guaEnabled}"
+                               th:field="*{casusername}"
+                               th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                               autocomplete="off" class="form-control" placeholder="用户名">
+                        <!--<input type="text" name="username" id="username" placeholder="用户名：请输入用户名" />-->
+                    </div>
+                    <div class="loginItem">
+                        <input type="hidden"
+                               th:field="*{password}">
+                        <input type="password"  th:accesskey="#{screen.welcome.label.password.accesskey}"
+                               th:field="*{caspassword}"
+                               autocomplete="off" class="form-control password" placeholder="密码">
+                        <!--<input type="password" name="password" id="password" placeholder="密码：请输入密码" />-->
+                    </div>
+                    <input type="hidden" id="wechatCode"
+                           th:field="*{code}"
+                           class="form-control" placeholder="微信登陆码">
+                    <section>
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="submit"/>
+                        <input type="hidden" name="geolocation"/>
+                        <!--<div class="li">-->
+                            <!--<div class="ele-wrap">-->
+                                <!--<input class="btn btn-blue"-->
+                                       <!--style="text-align: center"-->
+                                       <!--name=""-->
+                                       <!--accesskey="l"-->
+                                       <!--th:value="#{screen.welcome.button.login}"-->
+                                       <!--tabindex="6"-->
+                                       <!--type="submit"/>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    </section>
+                    <div th:if="${#fields.hasErrors('*')}">
+                        <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+                    </div>
+                    <div class="loginItem">
+                        <button type="submit" id="submit">
+                            <span>登录</span>
+                        </button>
+                    </div>
+                </form>
+                <div id="weixinScan" class="weixinScan">
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <span>COPYRIGHT(C) 2020 江苏洋河酒厂股份有限公司 (苏酒集团)</span>
+    </footer>
+    <script src="./themes/anumbrella/js/jquery-3.2.1.min.js" charset="utf-8"></script>
+    <script src="https://rescdn.qqmail.com/node/ww/wwopenmng/js/sso/wwLogin-1.0.0.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
         window.WwLogin({
-            "id" : "qrdiv",
-            "appid" : "wwb2aed5915cc292da",
-            "agentid" : "1000004",
-            "redirect_uri" :"https://peixun.chinayanghe.com/cas/login",
-            "state" : "p=123",
-            "href" : "https://peixun.chinayanghe.com/cas/themes/anumbrella/css/wechat.css",
+            "id": "weixinScan",
+            "appid": "wwb2aed5915cc292da",
+            "agentid": "1000004",
+            "redirect_uri": "https://peixun.chinayanghe.com/cas/login",
+            "state": "p=123",
+            "href": "https://peixun.chinayanghe.com/cas/themes/anumbrella/css/wechat.css",
         });
+
         $("#username").val("admin");
         $("#password").val("admin");
         autoLogin(getQueryVariable("code"));
 
-	});
+    });
+
+    function switchTab(that) {
+        let preActive = $(".active").attr("showData");
+        let nextActive = $(that).attr("showData");
+        $(".active").removeClass("active");
+        $(preActive).hide();
+        $(that).addClass("active");
+        if (nextActive == ".weixinScan") {
+            $(nextActive).empty();
+            window.WwLogin({
+                "id": "weixinScan",
+                "appid": "wwb2aed5915cc292da",
+                "agentid": "1000004",
+                "redirect_uri": "https://peixun.chinayanghe.com/cas/login",
+                "state": "p=123",
+                "href": "https://peixun.chinayanghe.com/cas/themes/anumbrella/css/wechat.css",
+            });
+
+        }
+        $(nextActive).show('slow/400/fast');
+    }
+
+
     function getQueryVariable(variable)
     {
         var query = window.location.search.substring(1);
@@ -156,11 +287,12 @@
             $("#wechatCode").val(code);
             $("#loginForm").attr("action","/cas/login");
             $("#loginForm").submit();
-		}else{
+        }else{
             console.log("请使用用户名密码登陆")
-		}
+        }
     }
 
+    </script>
+</body>
 
-
-</script>
+</html>
